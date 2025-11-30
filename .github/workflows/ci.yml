@@ -155,6 +155,11 @@ jobs:
         with:
           node-version: 20
           cache: pnpm
+          
+      - name: Setup PNPM
+        uses: pnpm/action-setup@v4
+        with:
+          version: 10.24.0
 
       - name: Install test deps
         working-directory: apps/e2e
