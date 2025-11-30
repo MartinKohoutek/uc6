@@ -73,10 +73,10 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       
-      #- name: Install Fly CLI
-      #  run: |
-      #    curl -L https://fly.io/install.sh | sh
-      #    echo "$HOME/.fly/bin" >> $GITHUB_PATH
+      - name: Install Fly CLI
+        run: |
+          curl -L https://fly.io/install.sh | sh
+          echo "$HOME/.fly/bin" >> $GITHUB_PATH
 
       #- name: Deploy to Fly.io
       #  uses: superfly/flyctl-actions@1.1
