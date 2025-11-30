@@ -73,7 +73,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Deploy to Fly.ioa
+      - name: Deploy to Fly.io
         uses: superfly/flyctl-actions@1.1
         with:
           args: deploy --config fly.toml --remote-only
