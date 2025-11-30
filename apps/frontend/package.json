@@ -8,7 +8,7 @@
     "build": "tsc -b && vite build",
     "lint": "eslint .",
     "format": "prettier --write .",
-	"lint-staged": "lint-staged",
+    "lint-staged": "lint-staged",
     "preview": "vite preview"
   },
   "dependencies": {
@@ -34,5 +34,10 @@
     "typescript-eslint": "^8.46.4",
     "vite": "^7.2.4"
   },
-  "lint-staged": { "*.{js, ts, jsx, tsx}": ["eslint --fix", "prettier --write"] }
+  "lint-staged": {
+    "*.{js, ts, jsx, tsx}": [
+      "eslint --fix",
+      "prettier --write"
+    ]
+  }
 }
