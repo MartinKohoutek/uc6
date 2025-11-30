@@ -168,6 +168,21 @@ jobs:
       - name: Install Playwright browsers
         working-directory: apps/e2e
         run: pnpm exec playwright install --with-deps
+        
+      - name: Install frontend deps
+        working-directory: apps/frontend
+        run: pnpm install --frozen-lockfile
+
+      - name: Build frontend
+        working-directory: apps/frontend
+        run: pnpm build
+
+      - name: Start preview server
+        working-directory: apps/frontend
+        run: pnpm run preview --port 5173 &
+
+      - name: Wait for frontend
+        run: npx wait-on http://localhost:5173
 
       - name: Run tests
         working-directory: apps/e2e
