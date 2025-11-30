@@ -65,15 +65,15 @@ jobs:
         working-directory: apps/backend
         run: ./gradlew build --no-daemon
 
-  deploy-backend:
-    name: Deploy Backend to Fly.io
-    runs-on: ubuntu-latest
-    needs: build-backend
-    if: needs.changes.outputs.backend == 'true' || needs.changes.outputs.workflow == 'true'
-    steps:
-      - uses: actions/checkout@v4
+deploy-backend:
+  name: Deploy Backend to Fly.io
+  runs-on: ubuntu-latest
+  needs: build-backend
+  if: needs.changes.outputs.backend == 'true' || needs.changes.outputs.workflow == 'true'
+  steps:
+    - uses: actions/checkout@v4
 
-      - name: Deploy to Fly.io
+    - name: Deploy to Fly.io
       uses: superfly/flyctl-actions@1.1
       with:
         args: deploy --config fly.toml --remote-only
