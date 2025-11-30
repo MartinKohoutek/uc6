@@ -8,8 +8,7 @@ on:
 
 env:
   HUSKY: 0
-  ENABLE_DEPLOY: false
-
+  
 jobs:
   changes:
     name: Detect changes
@@ -70,7 +69,7 @@ jobs:
     name: Deploy Backend to Fly.io
     runs-on: ubuntu-latest
     needs: build-backend
-    if: env.ENABLE_DEPLOY == 'true' && (needs.changes.outputs.backend == 'true' || needs.changes.outputs.workflow == 'true')
+    if: vars.ENABLE_DEPLOY == 'true' && (needs.changes.outputs.backend == 'true' || needs.changes.outputs.workflow == 'true')
     steps:
       - uses: actions/checkout@v4
       
