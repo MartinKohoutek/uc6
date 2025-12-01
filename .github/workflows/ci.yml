@@ -187,9 +187,8 @@ jobs:
         working-directory: apps/frontend
         env:
           VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
-          VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
-          VERCEL_TEAM_ID: ${{ secrets.VERCEL_TEAM_ID }}
-        run: vercel deploy --prod --yes --token $VERCEL_TOKEN --team $VERCEL_TEAM_ID --project $VERCEL_PROJECT_ID
+          VERCEL_SCOPE: ${{ secrets.VERCEL_TEAM_ID }}
+        run: vercel deploy --prod --yes --token $VERCEL_TOKEN --scope $VERCEL_SCOPE
 
   e2e-tests:
     name: Run E2E tests
