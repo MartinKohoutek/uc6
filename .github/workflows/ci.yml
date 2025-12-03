@@ -91,7 +91,7 @@ jobs:
           FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN }}
         run: |
           cd apps/backend
-          fly deploy --config fly.toml --remote-only
+          fly deploy --config fly/stag.toml --remote-only
 
   build-frontend:
     name: Build Frontend
