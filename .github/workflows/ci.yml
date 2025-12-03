@@ -205,9 +205,13 @@ jobs:
           VERCEL_SCOPE: ${{ secrets.VERCEL_TEAM_ID }}
         # run: vercel deploy --prod --yes --token $VERCEL_TOKEN --scope $VERCEL_SCOPE
         run: |
-          vercel pull --yes --token $VERCEL_TOKEN
-          vercel build
-          vercel deploy --prebuilt --yes --token $VERCEL_TOKEN --scope $VERCEL_SCOPE${{ github.ref == 'refs/heads/main' && ' --prod' || '' }}
+          if [[ $GITHUB_REF == refs/heads/main ]]; then
+            vercel deploy --prod --yes --token $VERCEL_TOKEN --scope $VERCEL_SCOPE
+          else
+            vercel pull --yes --token $VERCEL_TOKEN
+            vercel build
+            vercel deploy --prebuilt --yes --token $VERCEL_TOKEN --scope $VERCEL_SCOPE
+          fi
 
   e2e-tests:
     name: Run E2E tests
