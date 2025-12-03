@@ -201,10 +201,13 @@ jobs:
           VERCEL_SCOPE: ${{ secrets.VERCEL_TEAM_ID }}
         run: |
           if [[ $GITHUB_REF == refs/heads/main ]] || ([[ $GITHUB_EVENT_NAME == "pull_request" ]] && [[ $GITHUB_BASE_REF == "main" ]]); then
+            echo "Deploying to PRODUCTION: ucprod.vercel.app"
             vercel deploy --prod --yes --token $VERCEL_TOKEN --scope $VERCEL_SCOPE
           elif [[ $GITHUB_REF == refs/heads/develop ]] || ([[ $GITHUB_EVENT_NAME == "pull_request" ]] && [[ $GITHUB_BASE_REF == "develop" ]]); then
+            echo "Deploying to STAGING: ucstag.vercel.app"
             curl -X POST https://api.vercel.com/v1/integrations/deploy/prj_491HTYeksQNewpiHnurynED9QM8o/Bhd8K3VGzB
           else
+            echo "Deploying to PREVIEW: ucprev.vercel.app"
             vercel pull --yes --token $VERCEL_TOKEN
             vercel build
             vercel deploy --prebuilt --yes --token $VERCEL_TOKEN --scope $VERCEL_SCOPE
