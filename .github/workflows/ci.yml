@@ -12,9 +12,6 @@ on:
       - develop
       - 'feature/**'
     types:
-      - opened
-      - synchronize
-      - reopened
       - closed
 
 env:
