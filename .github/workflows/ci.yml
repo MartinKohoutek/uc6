@@ -4,7 +4,7 @@ on:
   push:
     branches: ["main", "develop", "feature/**"]
   pull_request:
-    branches: ["main", "develop", "feature/**"]
+    types: [closed]
 
 env:
   HUSKY: 0
@@ -79,32 +79,23 @@ jobs:
       - name: Install Fly CLI
         run: |
           curl -L https://fly.io/install.sh | sh
-          echo "$HOME/.fly/bin" >> $GITHUB_PATH
+          echo "$HOME/.fly/bin" >> $GITHUB_PATH      
 
-      #- name: Deploy to Fly.io
-      #  uses: superfly/flyctl-actions@1.1
-      #  with:
-      #    args: deploy --config fly.toml --remote-only
+      #- name: Deploy to Staging Server on fly.io
+      #  if: github.ref == 'refs/heads/develop'
       #  env:
-      #    FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN }}
-      #  working-directory: apps/backend
-      
-
-      - name: Deploy to Staging Server on fly.io
-        if: github.ref == 'refs/heads/develop'
-        env:
-          FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN_STAG }}
-        run: |
-          cd apps/backend
-          fly deploy --config fly/stag.toml --remote-only
+      #    FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN_STAG }}
+      #  run: |
+      #    cd apps/backend
+      #    fly deploy --config fly/stag.toml --remote-only
           
-      - name: Deploy to Production Server on fly.io
-        if: github.ref == 'refs/heads/main'
-        env:
-          FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN_PROD }}
-        run: |
-          cd apps/backend
-          fly deploy --config fly/prod.toml --remote-only
+      #- name: Deploy to Production Server on fly.io
+      #  if: github.ref == 'refs/heads/main'
+      #  env:
+      #    FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN_PROD }}
+      #  run: |
+      #    cd apps/backend
+      #    fly deploy --config fly/prod.toml --remote-only
 
   build-frontend:
     name: Build Frontend
@@ -167,7 +158,12 @@ jobs:
     needs: build-frontend
     if: |
       vars.ENABLE_DEPLOY_FRONTEND == 'true' &&
-      (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/develop' || startsWith(github.ref, 'refs/heads/feature/'))
+      (
+        github.ref == 'refs/heads/main' ||
+        github.ref == 'refs/heads/develop' ||
+        startsWith(github.ref, 'refs/heads/feature/') ||
+        (github.event_name == 'pull_request' && github.event.pull_request.merged == true)
+      )
     steps:
       - uses: actions/checkout@v4
 
@@ -190,24 +186,15 @@ jobs:
       - name: Install Vercel CLI
         run: pnpm add -g vercel
 
-      #- name: Pull Vercel Environment Info
-      #  working-directory: apps/frontend
-      #  env:
-      #    VERCEL_TEAM_ID: ${{ secrets.VERCEL_TEAM_ID }}
-      #    VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
-      #    VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
-      #  run: vercel pull --yes --environment=production
-
       - name: Deploy to Vercel
         working-directory: apps/frontend
         env:
           VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
           VERCEL_SCOPE: ${{ secrets.VERCEL_TEAM_ID }}
-        # run: vercel deploy --prod --yes --token $VERCEL_TOKEN --scope $VERCEL_SCOPE 
         run: |
-          if [[ $GITHUB_REF == refs/heads/main ]]; then
+          if [[ $GITHUB_REF == refs/heads/main ]] || ([[ $GITHUB_EVENT_NAME == "pull_request" ]] && [[ $GITHUB_BASE_REF == "main" ]]); then
             vercel deploy --prod --yes --token $VERCEL_TOKEN --scope $VERCEL_SCOPE
-          elif [[ $GITHUB_REF == 'refs/heads/develop' ]]; then
+          elif [[ $GITHUB_REF == refs/heads/develop ]] || ([[ $GITHUB_EVENT_NAME == "pull_request" ]] && [[ $GITHUB_BASE_REF == "develop" ]]); then
             curl -X POST https://api.vercel.com/v1/integrations/deploy/prj_491HTYeksQNewpiHnurynED9QM8o/Bhd8K3VGzB
           else
             vercel pull --yes --token $VERCEL_TOKEN
