@@ -71,7 +71,7 @@ jobs:
     needs: build-backend
     if: |
       vars.ENABLE_DEPLOY == 'true' && 
-      (github.ref == 'refs/heads/develop' || github.ref == 'refs/heads/main')
+      (github.ref == 'refs/heads/develop' || github.ref == 'refs/heads/main') &&
       (needs.changes.outputs.backend == 'true' || needs.changes.outputs.workflow == 'true')
     steps:
       - uses: actions/checkout@v4
