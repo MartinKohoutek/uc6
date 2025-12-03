@@ -205,6 +205,7 @@ jobs:
           VERCEL_SCOPE: ${{ secrets.VERCEL_TEAM_ID }}
         # run: vercel deploy --prod --yes --token $VERCEL_TOKEN --scope $VERCEL_SCOPE
         run: |
+          vercel pull --yes
           vercel build
           vercel deploy --prebuilt --yes --token $VERCEL_TOKEN --scope $VERCEL_SCOPE${{ github.ref == 'refs/heads/main' && ' --prod' || '' }}
 
