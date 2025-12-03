@@ -206,13 +206,15 @@ jobs:
         # run: vercel deploy --prod --yes --token $VERCEL_TOKEN --scope $VERCEL_SCOPE 
         run: |
           if [[ $GITHUB_REF == refs/heads/main ]]; then
-            vercel deploy --prod --yes --token $VERCEL_TOKEN --scope $VERCEL_SCOPE --alias ucprod.vercel.app
-          elif [[ github.ref == 'refs/heads/develop' ]]; then
+            vercel deploy --prod --yes --token $VERCEL_TOKEN --scope $VERCEL_SCOPE
+          elif [[ $GITHUB_REF == 'refs/heads/develop' ]]; then
             curl -X POST https://api.vercel.com/v1/integrations/deploy/prj_491HTYeksQNewpiHnurynED9QM8o/Bhd8K3VGzB
           else
             vercel pull --yes --token $VERCEL_TOKEN
             vercel build
             vercel deploy --prebuilt --yes --token $VERCEL_TOKEN --scope $VERCEL_SCOPE
+            DEPLOYMENT_URL=$(vercel list --token $VERCEL_TOKEN --scope $VERCEL_SCOPE --limit 1 --prod=false --json | jq -r '.[0].url')
+            vercel alias set $DEPLOYMENT_URL ucprev.vercel.app --token $VERCEL_TOKEN --scope $VERCEL_SCOPE
           fi
 
   e2e-tests:
