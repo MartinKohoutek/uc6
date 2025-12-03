@@ -87,12 +87,19 @@ jobs:
       #  working-directory: apps/backend
       
 
-      - name: Deploy to Fly.io
+      - name: Deploy to Staging Server on fly.io
         env:
           FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN_STAG }}
         run: |
           cd apps/backend
           fly deploy --config fly/stag.toml --remote-only
+          
+      - name: Deploy to Production Server on fly.io
+        env:
+          FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN_PROD }}
+        run: |
+          cd apps/backend
+          fly deploy --config fly/prod.toml --remote-only
 
   build-frontend:
     name: Build Frontend
